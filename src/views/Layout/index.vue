@@ -10,10 +10,10 @@
       <span>后台管理系统</span>
       </div>
       <el-dropdown>
-      <div class="people">
-        <img class="picture" src="./wjc.jpg" >
+      <div class="people"> 
+        <img class="picture" :src="user.photo" >
         <span>
-        hello<i class="el-icon-arrow-down el-icon--right"></i>
+        {{ user.name }}<i class="el-icon-arrow-down el-icon--right"></i>
         </span>
       </div>
       <el-dropdown-menu slot="dropdown">
@@ -30,17 +30,28 @@
 
 <script>
 import AppAside from './components/aside'
+import {getUserProfile} from '@/api/user'
 export default {
   name: 'LayoutIndex',
   components:{
     AppAside
   },
-  data () {
-    return {
+   data () {
+     return {
+      user:{}
     }
   },
+  created (){
+    this.loadUserProfile()
+  },
+  methods: {
+    loadUserProfile(){
 
-  methods: {}
+      getUserProfile().then(res =>{
+        this.user =res.data.data
+      })
+    }
+  }
 }
 </script>
 <style>
