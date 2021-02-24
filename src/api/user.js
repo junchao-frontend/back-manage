@@ -1,5 +1,5 @@
 //用户相关请求模块
-//用户登录
+//用户登录.
 //用户修改信息
 import request from '@/utils/request'
 export const login =data =>{
