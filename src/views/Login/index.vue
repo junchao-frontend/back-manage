@@ -61,16 +61,17 @@ export default {
         this.loginLoading=true
 
         login(this.user).then(res => {
-          console.log(res)
-
           this.$message({
             message: '登陆成功',
             type: 'success'
           })
           this.loginLoading=false
+          //本地储存只能存字符串
+          window.localStorage.setItem('user',JSON.stringify(res.data.data))
           this.$router.push({
             name: 'home'
           })
+         
         }).catch(err => {
           console.log('登陆失败',err)
           this.$message.error('登陆失败，手机号或验证码错误')

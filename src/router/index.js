@@ -3,14 +3,15 @@ import Router from 'vue-router'
 import Login from '@/views/login'
 import Home from '@/views/home'
 import Layout from '@/views/layout'
+import VueRouter from 'vue-router'
 
 
 
-Vue.use(Router)
+Vue.use(VueRouter)
 
-export default new Router({
+
   // mode:'history',
-  routes: [
+  const routes=[
     {
 		path: '/',
 		name: 'login',
@@ -28,4 +29,30 @@ export default new Router({
     }
 	
   ]
-})
+  const router = new VueRouter({
+	  routes
+  })
+
+//路由导航
+  router.beforeEach((to,from,next)=> {
+//to 是 访问界面
+// from 是来自哪
+// next是放行方法
+	if(to.path !=='/login'){
+		const user =JSON.parse(window.localStorage.getItem('user'))
+		
+		if(user){
+			//已登录，允许通过
+			next()
+		} else {
+			//没有登录 跳转到登录界面
+			next('/login')
+		}
+	} else {
+		//登录界面 正常允许通过
+		next()
+	}
+
+  })
+
+export default router
