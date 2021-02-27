@@ -13,12 +13,12 @@ Vue.use(VueRouter)
   // mode:'history',
   const routes=[
     {
-		path: '/',
+		path: '/login',
 		name: 'login',
 		component: Login,
 	},
 	{
-		path: '/layout',
+		path: '/',
 		component: Layout,
 		children:[{
 			path:'',

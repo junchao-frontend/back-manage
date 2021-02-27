@@ -18,7 +18,8 @@
       </div>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item>个人设置</el-dropdown-item>
-        <el-dropdown-item>退出登录</el-dropdown-item>
+        <el-dropdown-item
+        @click.native="OnLogout">退出登录</el-dropdown-item>
        
       </el-dropdown-menu>
     </el-dropdown>
@@ -50,6 +51,21 @@ export default {
       getUserProfile().then(res =>{
         this.user =res.data.data
       })
+    },
+    OnLogout(){
+       this.$confirm('确认退出吗?', '退出提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          window.localStorage.removeItem('user')
+          this.$router.push('/login')
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消退出'
+          });          
+        });
     }
   }
 }
