@@ -25,11 +25,11 @@
         </el-submenu>
       </el-submenu> -->
       <li > <img class="logo" src="./logo.png" ></li>
-      <el-menu-item index="/layout">
+      <el-menu-item index="/">
         <i class="el-icon-s-check"></i>
         <span slot="title">首页</span>
       </el-menu-item>
-      <el-menu-item index="/a">
+      <el-menu-item index="/article">
         <i class="el-icon-menu"></i>
         <span slot="title">内容管理</span>
       </el-menu-item>

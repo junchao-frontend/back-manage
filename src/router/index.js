@@ -1,9 +1,10 @@
 import Vue from 'vue'
-import Router from 'vue-router'
+import VueRouter from 'vue-router'
 import Login from '@/views/login'
 import Home from '@/views/home'
 import Layout from '@/views/layout'
-import VueRouter from 'vue-router'
+import Article from '@/views/article'
+
 
 
 
@@ -24,6 +25,11 @@ Vue.use(VueRouter)
 			path:'',
 			name:'home',
 			component: Home
+		},
+		{
+			path:'/article',
+			name:'article',
+			component:Article
 		}
 		]
     }
