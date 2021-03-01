@@ -52,11 +52,42 @@
       label可以设定列的标题
       prop用来设定要渲染的列表项数据字段 -->
       <el-table :data="articles" stripe style="width: 100%" class="table1">
-        <el-table-column prop="date" label="封面"> </el-table-column>
+        <el-table-column label="封面">
+          <template slot-scope="scope">
+            <img
+              class="article-cover"
+              v-if="scope.row.cover.images[0]"
+              :src="scope.row.cover.images[0]"
+            />
+            <img class="article-cover" v-else src="./1234.png" alt="" />
+          </template>
+        </el-table-column>
         <el-table-column prop="title" label="标题"> </el-table-column>
-        <el-table-column prop="status" label="状态"> </el-table-column>
+        <el-table-column label="状态">
+          <!-- 如果需要在自定义模板列中获取当前遍历的数据 那就在templete上声明
+          slot-scope=“scope” -->
+          <template slot-scope="scope">
+            <el-tag :type="articleStatus[scope.row.status].type">
+              {{ articleStatus[scope.row.status].text }}
+            </el-tag>
+            <!-- <el-tag type="success" v-if="scope.row.status === 0">草稿</el-tag>
+            <el-tag type="success" v-else-if="scope.row.status === 1"
+              >待审核</el-tag
+            >
+            <el-tag type="success" v-else-if="scope.row.status === 2"
+              >审核通过</el-tag
+            >
+            <el-tag type="success" v-else-if="scope.row.status === 3"
+              >审核失败</el-tag
+            >
+            <el-tag type="success" v-else-if="scope.row.status === 4"
+              >已删除</el-tag
+            > -->
+          </template>
+        </el-table-column>
         <el-table-column prop="pubdate" label="发布时间"> </el-table-column>
         <el-table-column label="操作">
+          <!-- 如果需要自定义表格列模板，则把需要自定义的内容放到template里面 -->
           <template>
             <el-button
               size="mini"
@@ -98,24 +129,14 @@ export default {
         desc: "",
       },
       value1: '',
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }],
-      articles: []
+      articles: [],
+      articleStatus: [
+        { status: 0, text: '草稿', type: 'info' },//索引是0
+        { status: 1, text: '待审核', type: '' },//1
+        { status: 2, text: '审核通过', type: 'success' },//2
+        { status: 3, text: '审核失败', type: 'warning' },//3
+        { status: 4, text: '已删除', type: 'danger' }//4
+      ]
     };
   },
   created () {
@@ -139,5 +160,9 @@ export default {
 }
 .table1 {
   margin-bottom: 20px;
+}
+.article-cover {
+  width: 100px;
+  background-size: cover;
 }
 </style>
