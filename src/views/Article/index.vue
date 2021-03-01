@@ -46,12 +46,32 @@
     <el-card class="card2">
       <div slot="header" class="clearfix"></div>
       <!-- 列表数据 -->
-      <el-table :data="tableData" stripe style="width: 100%" class="table1">
-        <el-table-column prop="date" label="日期" width="180">
+      <!-- 1.把需要展示的数组列表数据绑定给table组件的data属性
+      2.设计表格列 el-table-column
+      width可以设定表格列的宽度
+      label可以设定列的标题
+      prop用来设定要渲染的列表项数据字段 -->
+      <el-table :data="articles" stripe style="width: 100%" class="table1">
+        <el-table-column prop="date" label="封面"> </el-table-column>
+        <el-table-column prop="title" label="标题"> </el-table-column>
+        <el-table-column prop="status" label="状态"> </el-table-column>
+        <el-table-column prop="pubdate" label="发布时间"> </el-table-column>
+        <el-table-column label="操作">
+          <template>
+            <el-button
+              size="mini"
+              circle
+              type="primary"
+              icon="el-icon-edit"
+            ></el-button>
+            <el-button
+              size="mini"
+              type="danger"
+              circle
+              icon="el-icon-delete"
+            ></el-button>
+          </template>
         </el-table-column>
-        <el-table-column prop="name" label="姓名" width="180">
-        </el-table-column>
-        <el-table-column prop="address" label="地址"> </el-table-column>
       </el-table>
       <!-- 列表数据 -->
       <el-pagination background layout="prev, pager, next" :total="1000">
