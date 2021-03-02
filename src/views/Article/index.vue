@@ -12,13 +12,13 @@
       <!-- form表单 -->
       <el-form ref="form" :model="form" label-width="40px" size="mini">
         <el-form-item label="状态">
-          <el-radio-group v-model="form.resource">
-            <el-radio label="全部"></el-radio>
-            <el-radio label="草稿"></el-radio>
-            <el-radio label="待审核"></el-radio>
-            <el-radio label="审核通过"></el-radio>
-            <el-radio label="审核失败"></el-radio>
-            <el-radio label="已删除"></el-radio>
+          <el-radio-group v-model="status">
+            <el-radio :label="null">全部</el-radio>
+            <el-radio :label="0">草稿</el-radio>
+            <el-radio :label="1">待审核</el-radio>
+            <el-radio :label="2">审核通过</el-radio>
+            <el-radio :label="3">审核失败</el-radio>
+            <el-radio :label="4">已删除</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道">
@@ -38,13 +38,16 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
+          <!-- button按钮的点击事件有个默认参数，当你没有指定参数的时候，它会默认传一个没有用的数据 -->
+          <el-button type="primary" @click="loadArticles(1)">查询</el-button>
         </el-form-item>
       </el-form>
       <!-- form表单 -->
     </el-card>
     <el-card class="card2">
-      <div slot="header" class="clearfix"></div>
+      <div slot="header" class="clearfix">
+        根据筛选条件共查询{{ totalCount }}条结果：
+      </div>
       <!-- 列表数据 -->
       <!-- 1.把需要展示的数组列表数据绑定给table组件的data属性
       2.设计表格列 el-table-column
@@ -105,7 +108,13 @@
         </el-table-column>
       </el-table>
       <!-- 列表数据 -->
-      <el-pagination background layout="prev, pager, next" :total="1000">
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :total="totalCount"
+        @current-change="onCurrentChange"
+        :page-size="pageSize"
+      >
       </el-pagination>
     </el-card>
   </div>
@@ -136,20 +145,31 @@ export default {
         { status: 2, text: '审核通过', type: 'success' },//2
         { status: 3, text: '审核失败', type: 'warning' },//3
         { status: 4, text: '已删除', type: 'danger' }//4
-      ]
+      ],
+      totalCount: 0,//总数据条数
+      pageSize: 10,  //每页大小
+      status: null //查询文章状态，不传默认全部
     };
   },
   created () {
-    this.loadArticles()
+    this.loadArticles(1)
   },
   methods: {
-    loadArticles () {
-      getArticles().then(res => {
-        this.articles = res.data.data.results
+    loadArticles (page = 1) {
+      getArticles({
+        page,
+        per_page: this.pageSize,
+        status: this.status
+      }).then(res => {
+        // this.articles = res.data.data.results
+        // this.totalCount = res.data.data.total_count
+        const { results, total_count: totalCount } = res.data.data
+        this.articles = results
+        this.totalCount = totalCount
       })
     },
-    onSubmit () {
-      console.log(this.onSubmit)
+    onCurrentChange (page) {
+      this.loadArticles(page)
     }
   }
 };
