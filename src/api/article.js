@@ -10,3 +10,10 @@ export const getArticles =params =>{
         params
     })
 }
+//展示文章频道
+export const getArticleChannels =() =>{
+  return request({
+      method: 'GET',
+      url:'/mp/v1_0/channels',
+  })
+}

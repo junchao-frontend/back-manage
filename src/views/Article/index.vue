@@ -22,24 +22,33 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道">
-          <el-select v-model="form.region" placeholder="请选择频道">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+          <el-select v-model="channelId" placeholder="请选择频道">
+            <el-option label="全部" :value="null"></el-option>
+            <el-option
+              :label="a.name"
+              :value="a.id"
+              v-for="(a, index) in channels"
+              :key="index"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="日期">
           <el-date-picker
-            v-model="value1"
+            v-model="rangeDate"
             type="datetimerange"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             :default-time="['12:00:00']"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
           >
           </el-date-picker>
         </el-form-item>
         <el-form-item>
           <!-- button按钮的点击事件有个默认参数，当你没有指定参数的时候，它会默认传一个没有用的数据 -->
-          <el-button type="primary" @click="loadArticles(1)">查询</el-button>
+          <el-button type="primary" :disabled="loading" @click="loadArticles(1)"
+            >查询</el-button
+          >
         </el-form-item>
       </el-form>
       <!-- form表单 -->
@@ -54,7 +63,13 @@
       width可以设定表格列的宽度
       label可以设定列的标题
       prop用来设定要渲染的列表项数据字段 -->
-      <el-table :data="articles" stripe style="width: 100%" class="table1">
+      <el-table
+        :data="articles"
+        stripe
+        style="width: 100%"
+        class="table1"
+        v-loading="loading"
+      >
         <el-table-column label="封面">
           <template slot-scope="scope">
             <img
@@ -112,6 +127,7 @@
         background
         layout="prev, pager, next"
         :total="totalCount"
+        :disabled="loading"
         @current-change="onCurrentChange"
         :page-size="pageSize"
       >
@@ -121,7 +137,7 @@
 </template>
 
 <script>
-import { getArticles } from '@/api/article'
+import { getArticles, getArticleChannels } from '@/api/article'
 export default {
   name: "ArticleIndex",
 
@@ -148,28 +164,44 @@ export default {
       ],
       totalCount: 0,//总数据条数
       pageSize: 10,  //每页大小
-      status: null //查询文章状态，不传默认全部
+      status: null, //查询文章状态，不传默认全部
+      channels: [],
+      channelId: null,
+      rangeDate: [null],
+      loading: true
     };
   },
   created () {
     this.loadArticles(1)
+    this.loadChannels()
   },
   methods: {
     loadArticles (page = 1) {
+      this.loading = true
       getArticles({
         page,
         per_page: this.pageSize,
-        status: this.status
+        status: this.status,
+        channel_id: this.channelId,
+        begin_pubdate: this.rangeDate ? this.rangeDate[0] : null,
+        end_pubdate: this.rangeDate ? this.rangeDate[1] : null
       }).then(res => {
         // this.articles = res.data.data.results
         // this.totalCount = res.data.data.total_count
         const { results, total_count: totalCount } = res.data.data
         this.articles = results
         this.totalCount = totalCount
+        this.loading = false
       })
     },
     onCurrentChange (page) {
       this.loadArticles(page)
+    },
+
+    loadChannels () {
+      getArticleChannels().then(res => {
+        this.channels = res.data.data.channels
+      })
     }
   }
 };
