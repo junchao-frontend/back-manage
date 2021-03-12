@@ -35,8 +35,10 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">发表</el-button>
-          <el-button>存入草稿</el-button>
+          <el-button type="primary" @click="onPublish((draft = false))"
+            >发表</el-button
+          >
+          <el-button @click="onPublish((draft = true))">存入草稿</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -44,7 +46,7 @@
 </template>
 
 <script>
-import { getArticleChannels } from '@/api/article'
+import { getArticleChannels, addArticle } from '@/api/article'
 export default {
   name: 'PublishIndex',
 
@@ -76,8 +78,14 @@ export default {
     this.loadChannels()
   },
   methods: {
-    onSubmit () {
-      console.log('submit!');
+    onPublish (draft = false) {
+      addArticle(this.article, draft).then(res => {
+        console.log(res)
+        this.$message({
+          message: '发布成功',
+          type: 'success'
+        })
+      })
     },
     loadChannels () {
       getArticleChannels().then(res => {

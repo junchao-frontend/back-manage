@@ -26,3 +26,15 @@ export const deleteArticle =articleId =>{
       //凡是看见接口路径中有：XXX的字段，则需要传递路径参数
   })
 }
+
+//发布文章
+export const addArticle =(data,draft=false) =>{
+  return request({
+      method: 'POST',
+      url:'/mp/v1_0/articles',
+      params:{
+        draft //是否存为草稿（true为草稿）
+      },
+      data
+  })
+}
