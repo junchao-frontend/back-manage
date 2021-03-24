@@ -9,12 +9,21 @@
           }}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
-      <el-form ref="form" :model="form" label-width="40px">
-        <el-form-item label="标题">
+      <el-form
+        ref="publish-form"
+        :model="article"
+        label-width="60px"
+        :rules="PublishRules"
+      >
+        <el-form-item label="标题" prop="title">
           <el-input v-model="article.title"></el-input>
         </el-form-item>
-        <el-form-item label="内容">
+        <el-form-item label="内容" prop="content">
           <el-input type="textarea" v-model="article.content"></el-input>
+          <!-- <el-tiptap
+            v-model="article.content"
+            :extensions="extensions"
+          ></el-tiptap> -->
         </el-form-item>
         <el-form-item label="封面">
           <el-radio-group v-model="article.cover.type">
@@ -25,7 +34,7 @@
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="频道">
+        <el-form-item label="频道" prop="channel_id">
           <el-select v-model="article.channel_id" placeholder="请选择频道">
             <el-option
               :label="channels.name"
@@ -49,6 +58,21 @@
 
 <script>
 import { getArticleChannels, addArticle, getArticle, updateArticle } from '@/api/article'
+// import {
+//   // 需要的 extensions
+//   ElementTiptap,
+//   Doc,
+//   Text,
+//   Paragraph,
+//   Heading,
+//   Bold,
+//   Underline,
+//   Italic,
+//   Strike,
+//   ListItem,
+//   BulletList,
+//   OrderedList
+// } from 'element-tiptap'
 export default {
   name: 'PublishIndex',
 
@@ -68,13 +92,43 @@ export default {
       article: {
         title: '',//文章标题
         content: '',//文章内容
+        channel_id: null,
         cover: { //文章封面
           type: 0,//封面类型 -1 自动 0 无图 1-1张 3-3 张
           images: [], //封面图片的地址
-          channels_id: null
-        }
+        },
+
+      },
+      PublishRules: {
+        title: [
+          { required: true, message: '请输入文章标题', trigger: 'blur' },
+          { min: 5, max: 30, message: '长度在 5 到 30 个字符', trigger: 'blur' }
+        ],
+        content: [
+          { required: true, message: '请输入文章内容', trigger: 'blur' }
+        ],
+        channel_id: [
+          { required: true, message: '请选择文章频道' }
+        ]
       }
+      // extensions: [
+      //   new Doc(),
+      //   new Text(),
+      //   new Paragraph(),
+      //   new Heading({ level: 5 }),
+      //   new Bold({ bubble: true }), // 在气泡菜单中渲染菜单按钮
+      //   new Underline({ bubble: true, menubar: false }), // 在气泡菜单而不在菜单栏中渲染菜单按钮
+      //   new Italic(),
+      //   new Strike(),
+      //   new ListItem(),
+      //   new BulletList(),
+      //   new OrderedList()
+      // ]
     }
+
+  },
+  components: {
+
   },
   created () {
     this.loadChannels()
@@ -88,26 +142,32 @@ export default {
   },
   methods: {
     onPublish (draft = false) {
+      this.$refs['publish-form'].validate(valid => {
+        if (!valid) {
+          return
+        }
+        if (this.$route.query.id) {
+          updateArticle(this.$route.query.id, this.article, draft).then(res => {
+            console.log(res)
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+            this.$router.push('/article')
+          })
+        } else {
+          addArticle(this.article, draft).then(res => {
+            console.log(res)
+            this.$message({
+              message: '发布成功',
+              type: 'success'
+            })
+            this.$router.push('/article')
+          })
+        }
+      })
       //const articleId = this.$route.query.id
-      if (this.$route.query.id) {
-        updateArticle(this.$route.query.id, this.article, draft).then(res => {
-          console.log(res)
-          this.$message({
-            message: '修改成功',
-            type: 'success'
-          })
-          this.$router.push('/article')
-        })
-      } else {
-        addArticle(this.article, draft).then(res => {
-          console.log(res)
-          this.$message({
-            message: '发布成功',
-            type: 'success'
-          })
-          this.$router.push('/article')
-        })
-      }
+
     },
     loadChannels () {
       getArticleChannels().then(res => {

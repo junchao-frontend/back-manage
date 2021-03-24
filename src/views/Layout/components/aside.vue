@@ -34,7 +34,7 @@
         <i class="el-icon-menu"></i>
         <span slot="title">内容管理</span>
       </el-menu-item>
-      <el-menu-item index="1">
+      <el-menu-item index="/image">
         <i class="el-icon-picture"></i>
         <span slot="title">素材管理</span>
       </el-menu-item>
